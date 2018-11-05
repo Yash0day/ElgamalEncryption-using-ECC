@@ -9,10 +9,11 @@ Gx = 550662630222773436695787188951685343262506034537775941755001873603891167292
 Gy = 32670510020758816978083085130507043184471273380659243275938904335757337482424
 GPoint = (Gx,Gy) # This is our generator point. Trillions of dif ones possible
 
-k = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364111  #random (<n)
+#k = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364111  #random (<n)
+k = random.getrandbits(250)
 
-#Individual Transaction/Personal Information
-privKey = 0xA0DC65FFCA799873CBEA0AC274015B9526505DAAAED385155425F7337704883E #replace with any private key
+#privKey = 0xA0DC65FFCA799873CBEA0AC274015B9526505DAAAED385155425F7337704883E #replace with any private key
+privKey = random.getrandbits(256)
 
 def modinv(a,n=Pcurve): #Extended Euclidean Algorithm/'division' in elliptic curves
     lm, hm = 1,0
@@ -36,9 +37,13 @@ def ECdouble(a): # This is called point doubling, also invented for EC.
     return (x,y)
 
 def EccMultiply(GenPoint,ScalarHex): #Double & add. Not true multiplication
-    if ScalarHex == 0 or ScalarHex >= N: raise Exception("Invalid Scalar/Private Key")
+    
+    if ScalarHex == 0 or ScalarHex >= N: 
+	raise Exception("Invalid Scalar/Private Key")
+
     ScalarBin = str(bin(ScalarHex))[2:]
     Q=GenPoint
+
     for i in range (1, len(ScalarBin)): # This is invented EC multiplication.
         Q=ECdouble(Q); # print "DUB", Q[0]; print
         if ScalarBin[i] == "1":
@@ -61,17 +66,17 @@ print PublicKey; print
 #else: # Or else, if the Y value is even.
 #    print "02"+str(hex(PublicKey[0])[2:-1]).zfill(64)
 
-#***encryption***
-print("***encryption***\n")
-message = 1234566548946516548979846516519489498984513006161988946500001651848941651
 
+#message = 1234566548946516548979846516519489498984513006161988946500001651848941651
+message = input("Enter Message to be encrypted > ")
+
+print("***Encryption***")
 C1 = EccMultiply(GPoint,k)
+
 C2 = EccMultiply(PublicKey,k)[0]+message
 print("***cipher * Text***")
 print("C1--%s",C1,"\n","C2--%s",C2)
 
-
-#***Decryption***
 print("***Decryption***")
 solution = C2-EccMultiply(C1, privKey)[0]
 print("the message is :",solution)
