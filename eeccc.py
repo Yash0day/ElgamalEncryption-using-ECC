@@ -1,4 +1,5 @@
 import random
+import Hash
 
 #secp256k1
 
@@ -42,10 +43,10 @@ def EccMultiply(GenPoint,ScalarHex): #Double & add. Not true multiplication
     ScalarBin = str(bin(ScalarHex))[2:]
     Q=GenPoint
 
-    for i in range (1, len(ScalarBin)): # This is invented EC multiplication.
-        Q=ECdouble(Q); # print "DUB", Q[0]; print
+    for i in range (1, len(ScalarBin)): #  EC multiplication.
+        Q=ECdouble(Q)
         if ScalarBin[i] == "1":
-            Q=ECadd(Q,GenPoint); # print "ADD", Q[0]; print
+            Q=ECadd(Q,GenPoint)
     return (Q)
 
 print; print "******* Public Key Generation *********"; 
@@ -64,21 +65,26 @@ print PublicKey; print
 #else: # Or else, if the Y value is even.
 #    print "02"+str(hex(PublicKey[0])[2:-1]).zfill(64)
 
-message = input("Enter Message to be encrypted > ")
+message = raw_input("Enter Message to be encrypted > ")
 
 def encryption(Public_Key, msg):
-     print("***Cypher ** Text***")
-     C1 = EccMultiply(GPoint, k)
-     C2 = EccMultiply(Public_Key, k)[0] + msg
+     
+     C1 = EccMultiply(GPoint, k);
+     C2 = EccMultiply(Public_Key, k)[0] + int(msg);
 
      return (C1, C2)
 
+decrypted_string = ''
 def decryption(C1, C2, private_Key):
     
      solution = C2-EccMultiply(C1, private_Key)[0]
 
      return (solution)
 
-(C1,C2) = encryption(PublicKey, message)
-s=decryption(C1, C2, privKey)
+(C1,C2) = encryption(PublicKey, Hash.encode(message))
+
+decrypted_string = decryption(C1, C2, privKey)
+s=Hash.decode(str(decrypted_string))
+print("**Original Message**")
 print(s)
+
