@@ -12,8 +12,6 @@ GPoint = (Gx,Gy) # Generator point
 
 k = random.getrandbits(250)
 
-privKey = random.getrandbits(256)
-
 def modinv(a,n=Pcurve): #Extended Euclidean Algorithm/'division' in elliptic curves
     lm, hm = 1,0
     low, high = a%n,n
@@ -49,42 +47,37 @@ def EccMultiply(GenPoint,ScalarHex): #Double & add. Not true multiplication
             Q=ECadd(Q,GenPoint)
     return (Q)
 
-print; print "******* Public Key Generation *********"; 
-print
-PublicKey = EccMultiply(GPoint,privKey)
-print "the private key:"; 
-print privKey; print
-print "the uncompressed public key (not address):"; 
-print PublicKey; print
-#print "the uncompressed public key (HEX):"; 
-#print "04" + "%064x" % PublicKey[0] + "%064x" % PublicKey[1]; 
-#print;
-#print "the official Public Key - compressed:"; 
-#if PublicKey[1] % 2 == 1: # If the Y value for the Public Key is odd.
-#    print "03"+str(hex(PublicKey[0])[2:-1]).zfill(64)
-#else: # Or else, if the Y value is even.
-#    print "02"+str(hex(PublicKey[0])[2:-1]).zfill(64)
+privKey = random.getrandbits(256)    
+
+def gen_pubKey():
+
+    #print("******* Public Key Generation *********")
+    PublicKey = EccMultiply(GPoint, privKey)
+
+    return PublicKey
+
 
 message = raw_input("Enter Message to be encrypted > ")
 
 def encryption(Public_Key, msg):
      
-     C1 = EccMultiply(GPoint, k);
-     C2 = EccMultiply(Public_Key, k)[0] + int(msg);
+     C1 = EccMultiply(GPoint, k)
+     C2 = EccMultiply(Public_Key, k)[0] + int(msg)
 
      return (C1, C2)
 
 decrypted_string = ''
+
 def decryption(C1, C2, private_Key):
     
      solution = C2-EccMultiply(C1, private_Key)[0]
 
      return (solution)
 
-(C1,C2) = encryption(PublicKey, Hash.encode(message))
+(C1,C2) = encryption(gen_pubKey(), Hash.encode(message))
 
 decrypted_string = decryption(C1, C2, privKey)
 s=Hash.decode(str(decrypted_string))
-print("**Original Message**")
+print(" **Original Message** ")
 print(s)
 
