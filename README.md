@@ -10,9 +10,9 @@ Can be used in Python 2.x and Python 3.x both
 ------------
 
 The elliptic curve domain parameters used are over Fp associated with a **Koblitz curve** *secp256k1*.
-/begin{equation}
+
 y^2 = x^3 + 7 
-/end{equation}
+
  Encoding/Decoding
 -------------------
 
