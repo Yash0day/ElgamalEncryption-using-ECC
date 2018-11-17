@@ -80,7 +80,7 @@ def decryption(C1, C2, private_Key):
      solution = C2-EccMultiply(C1, private_Key)[0]
 
      return (solution)
-#print('public key: ' , gen_pubKey())
+
 (C1,C2) = encryption(gen_pubKey(), Hash.encode(message))
 
 decrypted_string = decryption(C1, C2, privKey)
