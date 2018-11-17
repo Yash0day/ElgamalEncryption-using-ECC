@@ -10,7 +10,7 @@ Gx = 550662630222773436695787188951685343262506034537775941755001873603891167292
 Gy = 32670510020758816978083085130507043184471273380659243275938904335757337482424
 GPoint = (Gx,Gy) # Generator point
 
-k = random.getrandbits(250)
+k = random.getrandbits(256)
 
 def modinv(a,n=Pcurve): #Extended Euclidean Algorithm/'division' in elliptic curves
     lm, hm = 1,0
@@ -73,11 +73,12 @@ def decryption(C1, C2, private_Key):
      solution = C2-EccMultiply(C1, private_Key)[0]
 
      return (solution)
-
+#print('public key: ' , gen_pubKey())
 (C1,C2) = encryption(gen_pubKey(), Hash.encode(message))
 
 decrypted_string = decryption(C1, C2, privKey)
 s=Hash.decode(str(decrypted_string))
+print("Cipher Text : ", C1, C2)
+print("-----")
 print(" **Original Message** ")
 print(s)
-
